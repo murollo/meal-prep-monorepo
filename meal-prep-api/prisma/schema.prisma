@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Recipe {
+  id           String             @id @default(uuid())
+  title        String
+  description  String?
+  instructions String
+  baseServings Int
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  ingredients  RecipeIngredient[]
+  mealPlanItems MealPlanItem[]
+}
+
+model Ingredient {
+  id        String             @id @default(uuid())
+  name      String             @unique
+  createdAt DateTime           @default(now())
+  recipes   RecipeIngredient[]
+}
+
+model RecipeIngredient {
+  recipeId     String
+  ingredientId String
+  quantity     Float
+  unit         String
+  recipe       Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+
+  @@id([recipeId, ingredientId])
+}
+
+model MealPlan {
+  id            String         @id @default(uuid())
+  weekStartDate DateTime
+  peopleCount   Int
+  createdAt     DateTime       @default(now())
+  items         MealPlanItem[]
+}
+
+model MealPlanItem {
+  id         String   @id @default(uuid())
+  mealPlanId String
+  recipeId   String
+  dayOfWeek  String   // e.g. "MONDAY", "TUESDAY"
+  mealType   String   // "LUNCH" or "DINNER"
+  mealPlan   MealPlan @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+  recipe     Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+}

@@ -28,3 +28,6 @@ Thumbs.db
 
 # Docker data (just in case)
 .docker/
+
+# Prisma generated client (Prisma v7 custom output)
+meal-prep-api/generated/
