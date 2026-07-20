@@ -55,6 +55,10 @@ Interface de chat ou formulário simples para criar receitas sob demanda.
 * **Ações:**
   * Clicar em **"Adicionar ao Catálogo de Receitas"**: Salva a receita gerada pela IA diretamente no banco de dados local do usuário para que ela possa ser escolhida no planejamento semanal.
 
+> [!NOTE]
+> **Decisão de Arquitetura e Segurança (IA):**
+> A integração com a IA utilizará o modelo *Developer's Account*. A API Key do Gemini ficará estritamente oculta no arquivo `.env` do backend NestJS. Para fins de desenvolvimento e portfólio, utilizaremos a camada gratuita do Google AI Studio (limite de 15 RPM), garantindo custo zero e segurança profissional das credenciais.
+
 ---
 
 ## 🛠️ Futuras Melhorias (Pós-MVP)
