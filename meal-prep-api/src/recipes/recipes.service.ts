@@ -19,11 +19,11 @@ export class RecipesService {
       if (ingredients && ingredients.length > 0) {
         for (const ing of ingredients) {
           // Garante que o ingrediente existe no catálogo global (busca ou cria)
-          const ingredientNameTrimmed = ing.name.trim();
+          const normalizedName = this.normalizeName(ing.name);
           const dbIngredient = await tx.ingredient.upsert({
-            where: { name: ingredientNameTrimmed },
+            where: { name: normalizedName },
             update: {},
-            create: { name: ingredientNameTrimmed },
+            create: { name: normalizedName },
           });
 
           // Cria o relacionamento N:N na tabela associativa com a quantidade/unidade
@@ -94,11 +94,11 @@ export class RecipesService {
 
         // Insere as novas associações
         for (const ing of ingredients) {
-          const ingredientNameTrimmed = ing.name.trim();
+          const normalizedName = this.normalizeName(ing.name);
           const dbIngredient = await tx.ingredient.upsert({
-            where: { name: ingredientNameTrimmed },
+            where: { name: normalizedName },
             update: {},
-            create: { name: ingredientNameTrimmed },
+            create: { name: normalizedName },
           });
 
           await tx.recipeIngredient.create({
@@ -147,5 +147,13 @@ export class RecipesService {
         },
       },
     });
+  }
+
+  private normalizeName(name: string): string {
+    return name
+      .trim()
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
   }
 }
