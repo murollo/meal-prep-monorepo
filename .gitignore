@@ -30,4 +30,4 @@ Thumbs.db
 .docker/
 
 # Prisma generated client (Prisma v7 custom output)
-meal-prep-api/generated/
+meal-prep-api/src/generated/
