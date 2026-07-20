@@ -28,7 +28,7 @@ Lista de tarefas para acompanhar o desenvolvimento do projeto.
 
 ### Fase 4: Aplicativo Mobile (React Native / Expo) - Core
 - [x] Inicializar o projeto Expo (`meal-prep-app`) com TypeScript
-- [/] Configurar navegação entre telas (Expo Router)
+- [x] Configurar navegação entre telas (Expo Router)
 - [ ] Construir Tela 1: Planejamento semanal de marmitas (Almoço/Jantar) com seletor de pessoas
 - [ ] Construir Tela 2: Detalhes da receita (Modo de preparo e ingredientes proporcionais)
 - [ ] Construir Tela 3: Lista de Compras consolidada
