@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { 
   StyleSheet, 
   FlatList, 
@@ -12,6 +12,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing, Colors } from '@/constants/theme';
 import { useColorScheme } from 'react-native';
+import { useFocusEffect } from 'expo-router';
 
 const API_BASE_URL = 'http://localhost:3000';
 
@@ -39,17 +40,19 @@ export default function ShoppingListScreen() {
   // Estado para armazenar itens riscados (comprados)
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({});
 
-  useEffect(() => {
-    loadShoppingList();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadShoppingList();
+    }, [])
+  );
 
   const loadShoppingList = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // 1. Busca o planejamento semanal mais recente
-      const planResponse = await fetch(`${API_BASE_URL}/meal-plans`);
+      // 1. Busca o planejamento semanal mais recente (com cache-busting)
+      const planResponse = await fetch(`${API_BASE_URL}/meal-plans?t=${Date.now()}`);
       if (!planResponse.ok) {
         throw new Error('Falha ao buscar planejamento ativo.');
       }
@@ -65,8 +68,8 @@ export default function ShoppingListScreen() {
       const latestPlan = plans[0];
       setActivePlan(latestPlan);
 
-      // 2. Busca a lista de compras consolidada do planejamento
-      const listResponse = await fetch(`${API_BASE_URL}/meal-plans/${latestPlan.id}/shopping-list`);
+      // 2. Busca a lista de compras consolidada do planejamento (com cache-busting)
+      const listResponse = await fetch(`${API_BASE_URL}/meal-plans/${latestPlan.id}/shopping-list?t=${Date.now()}`);
       if (!listResponse.ok) {
         throw new Error('Falha ao calcular lista de compras consolidada.');
       }

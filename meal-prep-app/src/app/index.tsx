@@ -94,7 +94,7 @@ export default function WeeklyPlannerScreen() {
 
   const fetchLatestMealPlan = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/meal-plans`);
+      const response = await fetch(`${API_BASE_URL}/meal-plans?t=${Date.now()}`);
       if (response.ok) {
         const plans = await response.json();
         if (plans && plans.length > 0) {
