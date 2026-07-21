@@ -4,7 +4,8 @@ import {
   FlatList, 
   ActivityIndicator, 
   Pressable, 
-  View 
+  View,
+  Platform
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/themed-text';
@@ -206,6 +207,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: Spacing.four,
     maxWidth: 800,
+    paddingTop: Platform.OS === 'web' ? 80 : 0,
   },
   header: {
     flexDirection: 'row',
