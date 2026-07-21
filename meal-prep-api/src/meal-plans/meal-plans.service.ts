@@ -134,7 +134,7 @@ export class MealPlansService {
     }
 
     // Mapa para acumular ingredientes e somar as quantidades consolidadas
-    const consolidated: Record<string, { name: string; quantity: number; unit: string }> = {};
+    const consolidated: Record<string, { ingredientId: string; name: string; quantity: number; unit: string }> = {};
 
     for (const item of plan.items) {
       const recipe = item.recipe;
@@ -156,6 +156,7 @@ export class MealPlansService {
           consolidated[key].quantity += scaledQuantity;
         } else {
           consolidated[key] = {
+            ingredientId: ingId,
             name: ingName,
             quantity: scaledQuantity,
             unit: ingUnit,
