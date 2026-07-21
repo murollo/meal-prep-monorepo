@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { 
   StyleSheet, 
   FlatList, 
@@ -12,6 +12,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing, Colors } from '@/constants/theme';
 import { useColorScheme } from 'react-native';
+import { useFocusEffect } from 'expo-router';
 
 interface Ingredient {
   id: string;
@@ -43,12 +44,14 @@ export default function RecipesScreen() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [activePeopleCount, setActivePeopleCount] = useState<number | null>(null);
 
   const fetchRecipes = async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(API_URL);
+      // Adicionando cache-busting (?t=...) na requisição de receitas
+      const response = await fetch(`${API_URL}?t=${Date.now()}`);
       if (!response.ok) {
         throw new Error('Falha ao carregar as receitas.');
       }
@@ -61,9 +64,28 @@ export default function RecipesScreen() {
     }
   };
 
-  useEffect(() => {
-    fetchRecipes();
-  }, []);
+  const fetchActiveMealPlan = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/meal-plans?t=${Date.now()}`);
+      if (response.ok) {
+        const plans = await response.json();
+        if (plans && plans.length > 0) {
+          setActivePeopleCount(plans[0].peopleCount);
+        } else {
+          setActivePeopleCount(null);
+        }
+      }
+    } catch (e) {
+      console.error('Erro ao buscar plano ativo:', e);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchRecipes();
+      fetchActiveMealPlan();
+    }, [])
+  );
 
   const toggleExpand = (id: string) => {
     setExpandedId(expandedId === id ? null : id);
@@ -128,12 +150,35 @@ export default function RecipesScreen() {
                   <View style={styles.expandedContent}>
                     <View style={styles.divider} />
                     
-                    <ThemedText type="smallBold" style={styles.sectionTitle}>Ingredientes (Base):</ThemedText>
-                    {item.ingredients.map((ri, index) => (
-                      <ThemedText key={index} type="default" style={styles.ingredientRow}>
-                        • {ri.ingredient.name} - {ri.quantity}{ri.unit}
-                      </ThemedText>
-                    ))}
+                    {activePeopleCount ? (
+                      <>
+                        <ThemedText type="smallBold" style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+                          Ingredientes para {activePeopleCount} {activePeopleCount > 1 ? 'pessoas' : 'pessoa'} (Seu Plano):
+                        </ThemedText>
+                        {item.ingredients.map((ri, index) => {
+                          const scaledQty = Math.round(((ri.quantity / item.baseServings) * activePeopleCount) * 10) / 10;
+                          return (
+                            <ThemedText key={index} type="default" style={styles.ingredientRow}>
+                              • {ri.ingredient.name} - {scaledQty}{ri.unit}
+                            </ThemedText>
+                          );
+                        })}
+                        <ThemedText type="small" style={styles.scaleNotice}>
+                          * Valores escalonados proporcionalmente conforme seu planejamento ativo.
+                        </ThemedText>
+                      </>
+                    ) : (
+                      <>
+                        <ThemedText type="smallBold" style={styles.sectionTitle}>
+                          Ingredientes (Base para {item.baseServings} {item.baseServings > 1 ? 'pessoas' : 'pessoa'}):
+                        </ThemedText>
+                        {item.ingredients.map((ri, index) => (
+                          <ThemedText key={index} type="default" style={styles.ingredientRow}>
+                            • {ri.ingredient.name} - {ri.quantity}{ri.unit}
+                          </ThemedText>
+                        ))}
+                      </>
+                    )}
 
                     <ThemedText type="smallBold" style={[styles.sectionTitle, { marginTop: Spacing.three }]}>
                       Modo de Preparo:
@@ -252,6 +297,13 @@ const styles = StyleSheet.create({
     marginLeft: Spacing.two,
     marginBottom: Spacing.one,
     textTransform: 'capitalize',
+  },
+  scaleNotice: {
+    fontSize: 11,
+    opacity: 0.6,
+    fontStyle: 'italic',
+    marginTop: Spacing.two,
+    marginBottom: Spacing.one,
   },
   instructionsText: {
     opacity: 0.9,
