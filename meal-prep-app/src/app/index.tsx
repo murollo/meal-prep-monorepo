@@ -115,6 +115,8 @@ export default function WeeklyPlannerScreen() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           peopleCount: setupPeopleCount,
+          weekStartDate: new Date().toISOString(),
+          items: [],
         }),
       });
 
