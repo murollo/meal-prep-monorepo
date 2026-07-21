@@ -7,15 +7,16 @@ import { PrismaService } from '../prisma/prisma.service';
 export class MealPlansService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createMealPlanDto: CreateMealPlanDto) {
+  async create(createMealPlanDto: CreateMealPlanDto, userId: string) {
     const { items, weekStartDate, peopleCount } = createMealPlanDto;
 
     return this.prisma.$transaction(async (tx) => {
-      // 1. Cria o plano semanal (cabeçalho)
+      // 1. Cria o plano semanal (cabeçalho) associado ao usuário logado
       const mealPlan = await tx.mealPlan.create({
         data: {
           weekStartDate: new Date(weekStartDate),
           peopleCount,
+          userId, // 👈 Associado ao usuário logado
         },
       });
 
@@ -35,8 +36,10 @@ export class MealPlansService {
     });
   }
 
-  async findAll() {
+  async findAll(userId: string) {
+    // Retorna apenas os planejamentos do usuário logado
     return this.prisma.mealPlan.findMany({
+      where: { userId }, // 👈 Filtro por usuário
       include: {
         items: {
           include: {
@@ -55,19 +58,20 @@ export class MealPlansService {
     });
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, userId: string) {
     const plan = await this.findWithDetails(id);
-    if (!plan) {
+    // Garante que o plano existe E pertence ao usuário autenticado
+    if (!plan || plan.userId !== userId) {
       throw new NotFoundException(`Plano de refeição com ID "${id}" não encontrado.`);
     }
     return plan;
   }
 
-  async update(id: string, updateMealPlanDto: UpdateMealPlanDto) {
+  async update(id: string, updateMealPlanDto: UpdateMealPlanDto, userId: string) {
     const { items, weekStartDate, peopleCount } = updateMealPlanDto;
 
-    // Garante que o plano existe
-    await this.findOne(id);
+    // Garante que o plano pertence ao usuário autenticado antes de atualizar
+    await this.findOne(id, userId);
 
     return this.prisma.$transaction(async (tx) => {
       // 1. Atualiza cabeçalho do plano
@@ -101,15 +105,19 @@ export class MealPlansService {
     });
   }
 
-  async remove(id: string) {
-    await this.findOne(id);
+  async remove(id: string, userId: string) {
+    // Garante que pertence ao usuário antes de deletar
+    await this.findOne(id, userId);
     return this.prisma.mealPlan.delete({
       where: { id },
     });
   }
 
   // Método não-trivial: Algoritmo de Consolidação e Escalonamento de Ingredientes
-  async getShoppingList(id: string) {
+  async getShoppingList(id: string, userId: string) {
+    // Garante que pertence ao usuário
+    await this.findOne(id, userId);
+
     const plan = await this.prisma.mealPlan.findUnique({
       where: { id },
       include: {
