@@ -55,7 +55,7 @@ const DAYS_OF_WEEK = [
 export default function WeeklyPlannerScreen() {
   const scheme = useColorScheme();
   const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
-  const { token } = useAuth();
+  const { token, logout } = useAuth();
 
   const [mealPlan, setMealPlan] = useState<MealPlan | null>(null);
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -306,6 +306,14 @@ export default function WeeklyPlannerScreen() {
                 </Text>
               )}
             </Pressable>
+
+            <Pressable 
+              onPress={logout}
+              style={[styles.secondaryButton, { marginTop: Spacing.two }]}>
+              <ThemedText type="smallBold" style={{ color: '#ff9500' }}>
+                Sair da Conta 🚪
+              </ThemedText>
+            </Pressable>
           </View>
         </SafeAreaView>
       </ThemedView>
@@ -342,6 +350,10 @@ export default function WeeklyPlannerScreen() {
 
           <Pressable onPress={handleDeleteMealPlan} style={styles.deleteButton}>
             <ThemedText type="smallBold" style={{ color: '#ff4d4d' }}>Excluir</ThemedText>
+          </Pressable>
+
+          <Pressable onPress={logout} style={styles.logoutButton}>
+            <ThemedText type="smallBold" style={{ color: '#ff9500' }}>Sair 🚪</ThemedText>
           </Pressable>
         </View>
 
@@ -674,5 +686,20 @@ const styles = StyleSheet.create({
   modalSeparator: {
     height: 1,
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  },
+  secondaryButton: {
+    width: '100%',
+    maxWidth: 350,
+    paddingVertical: Spacing.three,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    backgroundColor: 'transparent',
+  },
+  logoutButton: {
+    paddingHorizontal: Spacing.two,
+    paddingVertical: Spacing.one,
   },
 });
