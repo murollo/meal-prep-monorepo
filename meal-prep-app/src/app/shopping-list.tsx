@@ -13,6 +13,7 @@ import { ThemedView } from '@/components/themed-view';
 import { Spacing, Colors } from '@/constants/theme';
 import { useColorScheme } from 'react-native';
 import { useFocusEffect } from 'expo-router';
+import { useAuth } from '@/context/auth-context';
 
 const API_BASE_URL = 'http://localhost:3000';
 
@@ -31,6 +32,7 @@ interface MealPlan {
 export default function ShoppingListScreen() {
   const scheme = useColorScheme();
   const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
+  const { token } = useAuth();
 
   const [activePlan, setActivePlan] = useState<MealPlan | null>(null);
   const [items, setItems] = useState<ShoppingListItem[]>([]);
@@ -51,8 +53,10 @@ export default function ShoppingListScreen() {
       setLoading(true);
       setError(null);
 
-      // 1. Busca o planejamento semanal mais recente (com cache-busting)
-      const planResponse = await fetch(`${API_BASE_URL}/meal-plans?t=${Date.now()}`);
+      // 1. Busca o planejamento semanal mais recente (com cache-busting e JWT)
+      const planResponse = await fetch(`${API_BASE_URL}/meal-plans?t=${Date.now()}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
       if (!planResponse.ok) {
         throw new Error('Falha ao buscar planejamento ativo.');
       }
@@ -68,8 +72,10 @@ export default function ShoppingListScreen() {
       const latestPlan = plans[0];
       setActivePlan(latestPlan);
 
-      // 2. Busca a lista de compras consolidada do planejamento (com cache-busting)
-      const listResponse = await fetch(`${API_BASE_URL}/meal-plans/${latestPlan.id}/shopping-list?t=${Date.now()}`);
+      // 2. Busca a lista de compras consolidada do planejamento (com cache-busting e JWT)
+      const listResponse = await fetch(`${API_BASE_URL}/meal-plans/${latestPlan.id}/shopping-list?t=${Date.now()}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
       if (!listResponse.ok) {
         throw new Error('Falha ao calcular lista de compras consolidada.');
       }

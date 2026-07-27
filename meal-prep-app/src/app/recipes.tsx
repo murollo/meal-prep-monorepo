@@ -13,6 +13,7 @@ import { ThemedView } from '@/components/themed-view';
 import { Spacing, Colors } from '@/constants/theme';
 import { useColorScheme } from 'react-native';
 import { useFocusEffect } from 'expo-router';
+import { useAuth } from '@/context/auth-context';
 
 interface Ingredient {
   id: string;
@@ -39,6 +40,7 @@ const API_URL = 'http://localhost:3000/recipes';
 export default function RecipesScreen() {
   const scheme = useColorScheme();
   const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
+  const { token } = useAuth();
   
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -66,7 +68,9 @@ export default function RecipesScreen() {
 
   const fetchActiveMealPlan = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/meal-plans?t=${Date.now()}`);
+      const response = await fetch(`http://localhost:3000/meal-plans?t=${Date.now()}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
       if (response.ok) {
         const plans = await response.json();
         if (plans && plans.length > 0) {

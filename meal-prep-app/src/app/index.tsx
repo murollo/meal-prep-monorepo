@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useAuth } from '@/context/auth-context';
 import { 
   StyleSheet, 
   ScrollView, 
@@ -54,6 +55,7 @@ const DAYS_OF_WEEK = [
 export default function WeeklyPlannerScreen() {
   const scheme = useColorScheme();
   const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
+  const { token } = useAuth();
 
   const [mealPlan, setMealPlan] = useState<MealPlan | null>(null);
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -94,7 +96,9 @@ export default function WeeklyPlannerScreen() {
 
   const fetchLatestMealPlan = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/meal-plans?t=${Date.now()}`);
+      const response = await fetch(`${API_BASE_URL}/meal-plans?t=${Date.now()}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
       if (response.ok) {
         const plans = await response.json();
         if (plans && plans.length > 0) {
@@ -113,7 +117,10 @@ export default function WeeklyPlannerScreen() {
       setSaving(true);
       const response = await fetch(`${API_BASE_URL}/meal-plans`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({
           peopleCount: setupPeopleCount,
           weekStartDate: new Date().toISOString(),
@@ -138,6 +145,7 @@ export default function WeeklyPlannerScreen() {
       setSaving(true);
       const response = await fetch(`${API_BASE_URL}/meal-plans/${mealPlan.id}`, {
         method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
       });
       if (response.ok) {
         setMealPlan(null);
@@ -155,7 +163,10 @@ export default function WeeklyPlannerScreen() {
       setMealPlan({ ...mealPlan, peopleCount: newCount });
       await fetch(`${API_BASE_URL}/meal-plans/${mealPlan.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({
           peopleCount: newCount,
         }),
@@ -192,7 +203,10 @@ export default function WeeklyPlannerScreen() {
       setSaving(true);
       const response = await fetch(`${API_BASE_URL}/meal-plans/${mealPlan.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({
           items: updatedItems,
         }),
@@ -223,7 +237,10 @@ export default function WeeklyPlannerScreen() {
       setSaving(true);
       const response = await fetch(`${API_BASE_URL}/meal-plans/${mealPlan.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({
           items: updatedItems,
         }),
