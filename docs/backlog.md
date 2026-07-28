@@ -33,13 +33,24 @@ Lista de tarefas para acompanhar o desenvolvimento do projeto.
 - [x] Construir Tela 2: Detalhes da receita (Modo de preparo e ingredientes proporcionais)
 - [x] Construir Tela 3: Lista de Compras consolidada
 
-### Fase 5: Integração com Inteligência Artificial
+### Fase 5: Integração com Inteligência Artificial (Opcional - Adiado)
 - [ ] Integrar o backend com a API do Google Gemini (usando SDK oficial para Node.js)
 - [ ] Criar o endpoint `POST /recipes/generate` para gerar receitas baseadas em estoque
 - [ ] Desenvolver a Tela 4 no App Mobile (Interface de geração com IA)
 
 ### Fase 6: Conectando Tudo e Deploy
-- [ ] Consumir os endpoints da API no App Mobile
+- [x] Consumir os endpoints da API no App Mobile (Conectado via Localhost)
 - [ ] Fazer deploy do backend (ex: Railway, Render)
 - [ ] Escrever a documentação de execução final no `README.md`
 - [ ] Gravar um vídeo demonstração para o LinkedIn
+
+### Fase 7: Nova Aba de Perfil e Segurança (Concluído)
+- [x] Criar a Tela 5: Perfil do Usuário (Aba no menu com informações básicas)
+- [x] Implementar Avatares Automáticos (Integração com API de Avatares baseada no e-mail)
+- [x] Desenvolver endpoint no backend `PATCH /auth/change-password` para troca de senha segura
+- [x] Criar formulário de Redefinição de Senha de dentro do perfil do usuário
+
+### Fase 8: Evolução do App e Novas Funcionalidades (Aprovado)
+- [ ] Desenvolver formulário visual de cadastro de novas Receitas com Ingredientes e Porções no App
+- [ ] Criar opção de Exportar/Compartilhar Lista de compras (Copiar texto / WhatsApp)
+- [ ] Criar Histórico de planejamentos semanais arquivados no banco de dados
