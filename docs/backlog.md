@@ -9,6 +9,13 @@ Lista de tarefas para acompanhar o desenvolvimento do projeto.
 
 ---
 
+## 🤝 Diretrizes do Fluxo de Trabalho (Workflow & Git)
+1. **Explicação Contínua:** Sempre explicar o que está sendo construído ou corrigido passo a passo de forma clara para o desenvolvedor.
+2. **Commits Frequentes:** Realizar commits no Git a cada funcionalidade ou tarefa concluída, mantendo o histórico de commits organizado e bem documentado.
+3. **Segurança de Variáveis de Ambiente:** Garantir que credenciais e o arquivo `.env` permaneçam ignorados no `.gitignore`, utilizando apenas o `.env.example` no controle de versão.
+
+---
+
 ## 📌 Road to MVP (Minimum Viable Product)
 
 ### Fase 1: Configuração Inicial e Documentação
