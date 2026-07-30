@@ -5,7 +5,9 @@ import {
   ActivityIndicator, 
   Pressable, 
   View,
-  Platform
+  Platform,
+  Share,
+  Linking
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/themed-text';
@@ -41,6 +43,59 @@ export default function ShoppingListScreen() {
 
   // Estado para armazenar itens riscados (comprados)
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({});
+  const [copySuccess, setCopySuccess] = useState(false);
+
+  const generateFormattedText = () => {
+    const peopleCount = activePlan?.peopleCount || 1;
+    let text = `🛒 *Lista de Compras - Meal Prep* (${peopleCount} ${peopleCount > 1 ? 'pessoas' : 'pessoa'})\n\n`;
+    
+    items.forEach(item => {
+      const isChecked = !!checkedItems[item.ingredientId];
+      const checkSymbol = isChecked ? '✅' : '[ ]';
+      const capitalizedName = item.name.charAt(0).toUpperCase() + item.name.slice(1);
+      text += `${checkSymbol} ${capitalizedName}: ${item.quantity} ${item.unit}\n`;
+    });
+
+    text += `\n_Gerado pelo Meal Prep AI_`;
+    return text;
+  };
+
+  const handleShareWhatsApp = async () => {
+    const text = generateFormattedText();
+    const encodedText = encodeURIComponent(text);
+    const whatsappUrl = `https://api.whatsapp.com/send?text=${encodedText}`;
+
+    try {
+      if (Platform.OS === 'web') {
+        window.open(whatsappUrl, '_blank');
+      } else {
+        const canOpen = await Linking.canOpenURL(whatsappUrl);
+        if (canOpen) {
+          await Linking.openURL(whatsappUrl);
+        } else {
+          await Share.share({ message: text });
+        }
+      }
+    } catch (e) {
+      console.error('Erro ao compartilhar no WhatsApp:', e);
+      Share.share({ message: text });
+    }
+  };
+
+  const handleCopyText = async () => {
+    const text = generateFormattedText();
+    try {
+      if (Platform.OS === 'web' && typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        await Share.share({ message: text });
+      }
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 3000);
+    } catch (e) {
+      console.error('Erro ao copiar:', e);
+    }
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -147,9 +202,22 @@ export default function ShoppingListScreen() {
               Ingredientes escalados para {activePlan.peopleCount} {activePlan.peopleCount > 1 ? 'pessoas' : 'pessoa'}
             </ThemedText>
           </View>
-          
+        </View>
+
+        {/* Barra de Ações (WhatsApp e Copiar) */}
+        <View style={styles.actionsBar}>
+          <Pressable onPress={handleShareWhatsApp} style={[styles.actionButton, { backgroundColor: '#25D366' }]}>
+            <ThemedText type="smallBold" style={{ color: '#fff' }}>📲 WhatsApp</ThemedText>
+          </Pressable>
+
+          <Pressable onPress={handleCopyText} style={[styles.actionButton, { backgroundColor: colors.backgroundSelected }]}>
+            <ThemedText type="smallBold" style={{ color: colors.text }}>
+              {copySuccess ? '✅ Copiado!' : '📋 Copiar Texto'}
+            </ThemedText>
+          </Pressable>
+
           <Pressable onPress={loadShoppingList} style={styles.refreshButton}>
-            <ThemedText type="smallBold" style={styles.refreshText}>Atualizar</ThemedText>
+            <ThemedText type="smallBold" style={styles.refreshText}>🔄 Atualizar</ThemedText>
           </Pressable>
         </View>
 
@@ -221,8 +289,21 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: Spacing.four,
+    paddingVertical: Spacing.three,
     gap: Spacing.two,
+  },
+  actionsBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two,
+    marginBottom: Spacing.three,
+  },
+  actionButton: {
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.two,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   mainTitle: {
     fontSize: 28,
@@ -231,7 +312,7 @@ const styles = StyleSheet.create({
   refreshButton: {
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.two,
-    borderRadius: 8,
+    borderRadius: 10,
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
   },
   refreshText: {

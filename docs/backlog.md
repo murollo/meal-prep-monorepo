@@ -51,6 +51,6 @@ Lista de tarefas para acompanhar o desenvolvimento do projeto.
 - [x] Criar formulário de Redefinição de Senha de dentro do perfil do usuário
 
 ### Fase 8: Evolução do App e Novas Funcionalidades (Aprovado)
-- [ ] Desenvolver formulário visual de cadastro de novas Receitas com Ingredientes e Porções no App
-- [ ] Criar opção de Exportar/Compartilhar Lista de compras (Copiar texto / WhatsApp)
+- [x] Desenvolver formulário visual de cadastro e edição de Receitas com Ingredientes e Porções no App
+- [x] Criar opção de Exportar/Compartilhar Lista de compras (Copiar texto / WhatsApp)
 - [ ] Criar Histórico de planejamentos semanais arquivados no banco de dados

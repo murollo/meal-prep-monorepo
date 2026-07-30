@@ -7,6 +7,7 @@ import {
   View, 
   Image,
   Platform,
+  Modal,
   useColorScheme 
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -36,6 +37,16 @@ const decodeJwt = (token: string | null) => {
   }
 };
 
+const AVATAR_STYLES = [
+  { id: 'initials', name: 'Iniciais' },
+  { id: 'bottts', name: 'Robôs' },
+  { id: 'avataaars', name: 'Pessoas' },
+  { id: 'fun-emoji', name: 'Emojis' },
+  { id: 'lorelei', name: 'Ilustração' },
+  { id: 'adventurer', name: 'Aventura' },
+  { id: 'big-smile', name: 'Sorrisos' },
+];
+
 export default function ProfileScreen() {
   const scheme = useColorScheme();
   const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
@@ -45,8 +56,15 @@ export default function ProfileScreen() {
   const payload = decodeJwt(token);
   const email = payload?.email || 'usuario@email.com';
   
-  // Usamos a API do Dicebear para obter um avatar PNG estilizado com base nas iniciais do e-mail
-  const avatarUrl = `https://api.dicebear.com/7.x/initials/png?seed=${encodeURIComponent(email)}&backgroundColor=007aff,34c759,ff9500`;
+  // Estado para estilo de avatar selecionado e controle do modal
+  const [selectedAvatarStyle, setSelectedAvatarStyle] = useState('initials');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const getAvatarUrl = (style: string) => {
+    return `https://api.dicebear.com/7.x/${style}/png?seed=${encodeURIComponent(email)}&backgroundColor=007aff,34c759,ff9500`;
+  };
+
+  const avatarUrl = getAvatarUrl(selectedAvatarStyle);
 
   // Estados do formulário de redefinição de senha
   const [currentPassword, setCurrentPassword] = useState('');
@@ -108,17 +126,77 @@ export default function ProfileScreen() {
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         
-        {/* Bloco de Informações do Usuário */}
+        {/* Bloco de Informações do Usuário com Botão de Trocar Ícone */}
         <View style={styles.profileHeader}>
-          <Image 
-            source={{ uri: avatarUrl }} 
-            style={[styles.avatar, { borderColor: colors.backgroundSelected }]} 
-          />
+          <Pressable onPress={() => setIsModalOpen(true)} style={styles.avatarContainer}>
+            <Image 
+              source={{ uri: avatarUrl }} 
+              style={[styles.avatar, { borderColor: colors.backgroundSelected }]} 
+            />
+            <View style={styles.editBadge}>
+              <ThemedText style={styles.editBadgeText}>✏️</ThemedText>
+            </View>
+          </Pressable>
+
           <View style={styles.userInfo}>
             <ThemedText type="subtitle">Perfil do Usuário</ThemedText>
             <ThemedText type="default" style={styles.emailText}>{email}</ThemedText>
+            <Pressable onPress={() => setIsModalOpen(true)} style={styles.changeIconButton}>
+              <ThemedText type="smallBold" style={{ color: '#007AFF' }}>
+                🎨 Trocar Ícone
+              </ThemedText>
+            </Pressable>
           </View>
         </View>
+
+        {/* Modal de Escolha de Avatar */}
+        <Modal
+          visible={isModalOpen}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setIsModalOpen(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <ThemedView type="backgroundElement" style={styles.modalContent}>
+              <ThemedText type="subtitle" style={{ marginBottom: 4 }}>Escolha seu Avatar</ThemedText>
+              <ThemedText type="small" style={{ opacity: 0.7, marginBottom: 16 }}>
+                Selecione o estilo do ícone da sua foto de perfil:
+              </ThemedText>
+
+              <View style={styles.avatarGrid}>
+                {AVATAR_STYLES.map((style) => {
+                  const url = getAvatarUrl(style.id);
+                  const isSelected = selectedAvatarStyle === style.id;
+                  return (
+                    <Pressable
+                      key={style.id}
+                      style={[
+                        styles.avatarOption,
+                        isSelected && { borderColor: '#007AFF', borderWidth: 2, backgroundColor: 'rgba(0, 122, 255, 0.1)' }
+                      ]}
+                      onPress={() => {
+                        setSelectedAvatarStyle(style.id);
+                        setIsModalOpen(false);
+                      }}
+                    >
+                      <Image source={{ uri: url }} style={styles.avatarOptionImage} />
+                      <ThemedText type="smallBold" style={{ fontSize: 11, textAlign: 'center', marginTop: 4 }}>
+                        {style.name}
+                      </ThemedText>
+                    </Pressable>
+                  );
+                })}
+              </View>
+
+              <Pressable 
+                style={[styles.button, { backgroundColor: '#333', marginTop: 16 }]}
+                onPress={() => setIsModalOpen(false)}
+              >
+                <ThemedText type="smallBold" style={{ color: '#fff' }}>Fechar</ThemedText>
+              </Pressable>
+            </ThemedView>
+          </View>
+        </Modal>
 
         {/* Formulário de Alteração de Senha */}
         <ThemedView type="backgroundElement" style={styles.card}>
@@ -253,11 +331,69 @@ const styles = StyleSheet.create({
     gap: Spacing.four,
     paddingVertical: Spacing.four,
   },
+  avatarContainer: {
+    position: 'relative',
+  },
   avatar: {
     width: 64,
     height: 64,
     borderRadius: 32,
     borderWidth: 2,
+  },
+  editBadge: {
+    position: 'absolute',
+    bottom: -2,
+    right: -2,
+    backgroundColor: '#007AFF',
+    borderRadius: 12,
+    width: 24,
+    height: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#1c1c1e',
+  },
+  editBadgeText: {
+    fontSize: 10,
+  },
+  changeIconButton: {
+    marginTop: 4,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.65)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: Spacing.four,
+  },
+  modalContent: {
+    width: '100%',
+    maxWidth: 420,
+    borderRadius: 20,
+    padding: Spacing.four,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  avatarGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+    justifyContent: 'center',
+    marginVertical: 8,
+  },
+  avatarOption: {
+    width: 90,
+    padding: 8,
+    borderRadius: 12,
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  avatarOptionImage: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
   },
   userInfo: {
     gap: Spacing.one,

@@ -5,7 +5,10 @@ import {
   ActivityIndicator, 
   Pressable, 
   View,
-  Platform
+  Platform,
+  Modal,
+  TextInput,
+  ScrollView
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/themed-text';
@@ -47,6 +50,120 @@ export default function RecipesScreen() {
   const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [activePeopleCount, setActivePeopleCount] = useState<number | null>(null);
+
+  // Estados para o Modal de Criação / Edição de Receitas
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingRecipeId, setEditingRecipeId] = useState<string | null>(null);
+
+  const [formTitle, setFormTitle] = useState('');
+  const [formDescription, setFormDescription] = useState('');
+  const [formBaseServings, setFormBaseServings] = useState('2');
+  const [formInstructions, setFormInstructions] = useState('');
+  const [formIngredients, setFormIngredients] = useState<Array<{ name: string; quantity: string; unit: string }>>([
+    { name: '', quantity: '1', unit: 'g' }
+  ]);
+
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const openCreateModal = () => {
+    setEditingRecipeId(null);
+    setFormTitle('');
+    setFormDescription('');
+    setFormBaseServings('2');
+    setFormInstructions('');
+    setFormIngredients([{ name: '', quantity: '1', unit: 'g' }]);
+    setFormError(null);
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (recipe: Recipe) => {
+    setEditingRecipeId(recipe.id);
+    setFormTitle(recipe.title);
+    setFormDescription(recipe.description || '');
+    setFormBaseServings(String(recipe.baseServings));
+    setFormInstructions(recipe.instructions);
+    setFormIngredients(
+      recipe.ingredients.length > 0
+        ? recipe.ingredients.map(ri => ({
+            name: ri.ingredient.name,
+            quantity: String(ri.quantity),
+            unit: ri.unit
+          }))
+        : [{ name: '', quantity: '1', unit: 'g' }]
+    );
+    setFormError(null);
+    setIsModalOpen(true);
+  };
+
+  const addIngredientRow = () => {
+    setFormIngredients([...formIngredients, { name: '', quantity: '1', unit: 'g' }]);
+  };
+
+  const removeIngredientRow = (index: number) => {
+    if (formIngredients.length === 1) return;
+    setFormIngredients(formIngredients.filter((_, i) => i !== index));
+  };
+
+  const updateIngredientRow = (index: number, field: 'name' | 'quantity' | 'unit', value: string) => {
+    const updated = [...formIngredients];
+    updated[index][field] = value;
+    setFormIngredients(updated);
+  };
+
+  const handleSaveRecipe = async () => {
+    if (!formTitle.trim()) {
+      setFormError('Informe o título da receita.');
+      return;
+    }
+    if (!formInstructions.trim()) {
+      setFormError('Informe o modo de preparo.');
+      return;
+    }
+    const validIngredients = formIngredients.filter(i => i.name.trim().length > 0);
+    if (validIngredients.length === 0) {
+      setFormError('Adicione pelo menos um ingrediente com nome.');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      setFormError(null);
+
+      const payload = {
+        title: formTitle.trim(),
+        description: formDescription.trim() || null,
+        baseServings: Math.max(1, parseInt(formBaseServings, 10) || 1),
+        instructions: formInstructions.trim(),
+        ingredients: validIngredients.map(i => ({
+          name: i.name.trim(),
+          quantity: parseFloat(i.quantity) || 1,
+          unit: i.unit.trim() || 'g'
+        }))
+      };
+
+      const url = editingRecipeId ? `${API_URL}/${editingRecipeId}` : API_URL;
+      const method = editingRecipeId ? 'PATCH' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Falha ao salvar receita.');
+      }
+
+      setIsModalOpen(false);
+      fetchRecipes();
+    } catch (err: any) {
+      setFormError(err.message || 'Ocorreu um erro ao salvar.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const fetchRecipes = async () => {
     try {
@@ -120,10 +237,17 @@ export default function RecipesScreen() {
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
-          <ThemedText type="title" style={styles.mainTitle}>Catálogo de Receitas</ThemedText>
-          <ThemedText type="default" style={styles.subtitle}>
-            Explore ideias de refeições balanceadas para as suas marmitas semanais.
-          </ThemedText>
+          <View style={styles.headerTitleRow}>
+            <View style={{ flex: 1 }}>
+              <ThemedText type="title" style={styles.mainTitle}>Catálogo de Receitas</ThemedText>
+              <ThemedText type="default" style={styles.subtitle}>
+                Explore e cadastre refeições para suas marmitas semanais.
+              </ThemedText>
+            </View>
+            <Pressable onPress={openCreateModal} style={styles.createButton}>
+              <ThemedText type="smallBold" style={{ color: '#fff' }}>➕ Nova Receita</ThemedText>
+            </Pressable>
+          </View>
         </View>
 
         <FlatList
@@ -190,6 +314,12 @@ export default function RecipesScreen() {
                     <ThemedText type="default" style={styles.instructionsText}>
                       {item.instructions}
                     </ThemedText>
+
+                    <View style={styles.cardActionsRow}>
+                      <Pressable onPress={() => openEditModal(item)} style={styles.editRecipeButton}>
+                        <ThemedText type="smallBold" style={{ color: '#007AFF' }}>✏️ Editar Receita</ThemedText>
+                      </Pressable>
+                    </View>
                   </View>
                 )}
               </ThemedView>
@@ -201,6 +331,130 @@ export default function RecipesScreen() {
             </ThemedView>
           }
         />
+
+        {/* Modal de Cadastro / Edição de Receita */}
+        <Modal
+          visible={isModalOpen}
+          transparent
+          animationType="slide"
+          onRequestClose={() => setIsModalOpen(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <ThemedView type="backgroundElement" style={styles.modalContent}>
+              <ScrollView style={{ maxHeight: 480 }} contentContainerStyle={{ gap: Spacing.three }}>
+                <ThemedText type="subtitle">
+                  {editingRecipeId ? '✏️ Editar Receita' : '🍳 Nova Receita'}
+                </ThemedText>
+
+                {formError && (
+                  <View style={styles.formErrorContainer}>
+                    <ThemedText type="smallBold" style={{ color: '#ff4d4d' }}>⚠️ {formError}</ThemedText>
+                  </View>
+                )}
+
+                <View style={styles.formField}>
+                  <ThemedText type="smallBold">Título da Receita *</ThemedText>
+                  <TextInput
+                    style={[styles.input, { color: colors.text, borderColor: colors.backgroundSelected }]}
+                    placeholder="Ex: Strogonoff de Frango"
+                    placeholderTextColor="rgba(255,255,255,0.3)"
+                    value={formTitle}
+                    onChangeText={setFormTitle}
+                  />
+                </View>
+
+                <View style={styles.formField}>
+                  <ThemedText type="smallBold">Descrição (Opcional)</ThemedText>
+                  <TextInput
+                    style={[styles.input, { color: colors.text, borderColor: colors.backgroundSelected }]}
+                    placeholder="Ex: Prato prático e proteico para a semana"
+                    placeholderTextColor="rgba(255,255,255,0.3)"
+                    value={formDescription}
+                    onChangeText={setFormDescription}
+                  />
+                </View>
+
+                <View style={styles.formField}>
+                  <ThemedText type="smallBold">Porções Base (Pessoas que a receita serve) *</ThemedText>
+                  <TextInput
+                    style={[styles.input, { color: colors.text, borderColor: colors.backgroundSelected }]}
+                    placeholder="Ex: 2"
+                    placeholderTextColor="rgba(255,255,255,0.3)"
+                    keyboardType="numeric"
+                    value={formBaseServings}
+                    onChangeText={setFormBaseServings}
+                  />
+                </View>
+
+                <View style={styles.formField}>
+                  <ThemedText type="smallBold">Ingredientes *</ThemedText>
+                  {formIngredients.map((ing, idx) => (
+                    <View key={idx} style={styles.ingredientFormRow}>
+                      <TextInput
+                        style={[styles.input, { flex: 2, color: colors.text, borderColor: colors.backgroundSelected }]}
+                        placeholder="Nome (ex: Arroz)"
+                        placeholderTextColor="rgba(255,255,255,0.3)"
+                        value={ing.name}
+                        onChangeText={(v) => updateIngredientRow(idx, 'name', v)}
+                      />
+                      <TextInput
+                        style={[styles.input, { flex: 1, color: colors.text, borderColor: colors.backgroundSelected }]}
+                        placeholder="Qtd (ex: 200)"
+                        placeholderTextColor="rgba(255,255,255,0.3)"
+                        keyboardType="numeric"
+                        value={ing.quantity}
+                        onChangeText={(v) => updateIngredientRow(idx, 'quantity', v)}
+                      />
+                      <TextInput
+                        style={[styles.input, { flex: 1, color: colors.text, borderColor: colors.backgroundSelected }]}
+                        placeholder="Un. (ex: g)"
+                        placeholderTextColor="rgba(255,255,255,0.3)"
+                        value={ing.unit}
+                        onChangeText={(v) => updateIngredientRow(idx, 'unit', v)}
+                      />
+                      {formIngredients.length > 1 && (
+                        <Pressable onPress={() => removeIngredientRow(idx)} style={styles.removeIngButton}>
+                          <ThemedText>🗑️</ThemedText>
+                        </Pressable>
+                      )}
+                    </View>
+                  ))}
+                  <Pressable onPress={addIngredientRow} style={styles.addIngButton}>
+                    <ThemedText type="smallBold" style={{ color: '#007AFF' }}>+ Adicionar Ingrediente</ThemedText>
+                  </Pressable>
+                </View>
+
+                <View style={styles.formField}>
+                  <ThemedText type="smallBold">Modo de Preparo / Instruções *</ThemedText>
+                  <TextInput
+                    style={[styles.input, styles.multilineInput, { color: colors.text, borderColor: colors.backgroundSelected }]}
+                    placeholder="Descreva o passo a passo..."
+                    placeholderTextColor="rgba(255,255,255,0.3)"
+                    multiline
+                    numberOfLines={4}
+                    value={formInstructions}
+                    onChangeText={setFormInstructions}
+                  />
+                </View>
+              </ScrollView>
+
+              <View style={styles.modalButtonsRow}>
+                <Pressable onPress={() => setIsModalOpen(false)} style={styles.cancelModalButton} disabled={submitting}>
+                  <ThemedText type="smallBold" style={{ color: '#aaa' }}>Cancelar</ThemedText>
+                </Pressable>
+                <Pressable onPress={handleSaveRecipe} style={styles.saveModalButton} disabled={submitting}>
+                  {submitting ? (
+                    <ActivityIndicator color="#fff" />
+                  ) : (
+                    <ThemedText type="smallBold" style={{ color: '#fff' }}>
+                      {editingRecipeId ? 'Salvar Alterações' : 'Cadastrar Receita'}
+                    </ThemedText>
+                  )}
+                </Pressable>
+              </View>
+            </ThemedView>
+          </View>
+        </Modal>
       </SafeAreaView>
     </ThemedView>
   );
@@ -222,12 +476,107 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.four,
     gap: Spacing.one,
   },
+  headerTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: Spacing.two,
+  },
+  createButton: {
+    backgroundColor: '#007AFF',
+    paddingVertical: Spacing.two,
+    paddingHorizontal: Spacing.three,
+    borderRadius: 12,
+  },
   mainTitle: {
     fontSize: 28,
     fontWeight: 'bold',
   },
   subtitle: {
     opacity: 0.7,
+  },
+  cardActionsRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginTop: Spacing.three,
+    paddingTop: Spacing.two,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.08)',
+  },
+  editRecipeButton: {
+    paddingVertical: Spacing.one,
+    paddingHorizontal: Spacing.two,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: Spacing.three,
+  },
+  modalContent: {
+    width: '100%',
+    maxWidth: 550,
+    borderRadius: 20,
+    padding: Spacing.four,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  formErrorContainer: {
+    backgroundColor: 'rgba(255, 77, 77, 0.1)',
+    padding: Spacing.two,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 77, 77, 0.3)',
+  },
+  formField: {
+    gap: Spacing.one,
+  },
+  input: {
+    height: 40,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: Spacing.three,
+    fontSize: 14,
+    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+  },
+  multilineInput: {
+    height: 90,
+    paddingTop: Spacing.two,
+    textAlignVertical: 'top',
+  },
+  ingredientFormRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two,
+  },
+  removeIngButton: {
+    padding: Spacing.one,
+  },
+  addIngButton: {
+    marginTop: Spacing.one,
+  },
+  modalButtonsRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    gap: Spacing.three,
+    marginTop: Spacing.three,
+    paddingTop: Spacing.two,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  cancelModalButton: {
+    paddingVertical: Spacing.two,
+    paddingHorizontal: Spacing.three,
+  },
+  saveModalButton: {
+    backgroundColor: '#007AFF',
+    paddingVertical: Spacing.two,
+    paddingHorizontal: Spacing.four,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   centerContainer: {
     flex: 1,
@@ -312,7 +661,7 @@ const styles = StyleSheet.create({
   instructionsText: {
     opacity: 0.9,
     lineHeight: 20,
-    whiteSpace: 'pre-line', // Preserva quebras de linha nativas no Web
+    whiteSpace: 'pre-line',
   } as any,
   emptyContainer: {
     alignItems: 'center',
