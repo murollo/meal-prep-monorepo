@@ -506,17 +506,19 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
-    maxWidth: 800, // Limita largura no modo web para não ficar esticado
-    paddingTop: Platform.OS === 'web' ? 80 : 0,
+    paddingHorizontal: Spacing.three,
+    maxWidth: 800,
+    width: '100%',
+    paddingTop: Platform.OS === 'web' ? 70 : 0,
   },
   header: {
-    paddingVertical: Spacing.three,
+    paddingVertical: Spacing.two,
     gap: Spacing.one,
   },
   miniStatsRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexWrap: 'wrap',
     gap: Spacing.two,
     marginBottom: Spacing.three,
   },
@@ -541,6 +543,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    flexWrap: 'wrap',
     gap: Spacing.two,
   },
   createButton: {

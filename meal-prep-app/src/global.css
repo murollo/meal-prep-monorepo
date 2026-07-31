@@ -6,3 +6,11 @@
   --font-rounded: 'Outfit', 'SF Pro Rounded', sans-serif;
   --font-serif: Georgia, 'Times New Roman', serif;
 }
+html, body, #root {
+  background-color: #0B0D12 !important;
+  color: #F9FAFB;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden !important;
+}

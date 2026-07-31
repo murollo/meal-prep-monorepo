@@ -325,35 +325,37 @@ export default function WeeklyPlannerScreen() {
       <SafeAreaView style={styles.safeArea}>
         {/* Cabeçalho */}
         <View style={styles.header}>
-          <View style={{ flex: 1 }}>
+          <View style={styles.headerTitleContainer}>
             <ThemedText type="title" style={styles.mainTitle}>Meu Planejamento</ThemedText>
             <ThemedText type="small" style={{ opacity: 0.6 }}>Cardápio semanal ativo</ThemedText>
           </View>
 
-          {/* Controle rápido de pessoas */}
-          <View style={styles.headerPeopleCount}>
-            <Pressable 
-              onPress={() => handleUpdatePeopleCount(Math.max(1, mealPlan.peopleCount - 1))}
-              style={[styles.headerCountBtn, { backgroundColor: colors.backgroundSelected }]}>
-              <ThemedText type="smallBold">-</ThemedText>
+          <View style={styles.headerActionsRow}>
+            {/* Controle rápido de pessoas */}
+            <View style={styles.headerPeopleCount}>
+              <Pressable 
+                onPress={() => handleUpdatePeopleCount(Math.max(1, mealPlan.peopleCount - 1))}
+                style={[styles.headerCountBtn, { backgroundColor: colors.backgroundSelected }]}>
+                <ThemedText type="smallBold">-</ThemedText>
+              </Pressable>
+              <ThemedText type="smallBold" style={styles.headerCountVal}>
+                {mealPlan.peopleCount} {mealPlan.peopleCount > 1 ? 'Pessoas' : 'Pessoa'}
+              </ThemedText>
+              <Pressable 
+                onPress={() => handleUpdatePeopleCount(mealPlan.peopleCount + 1)}
+                style={[styles.headerCountBtn, { backgroundColor: colors.backgroundSelected }]}>
+                <ThemedText type="smallBold">+</ThemedText>
+              </Pressable>
+            </View>
+
+            <Pressable onPress={handleDeleteMealPlan} style={styles.deleteButton}>
+              <ThemedText type="smallBold" style={{ color: '#ff4d4d' }}>Excluir</ThemedText>
             </Pressable>
-            <ThemedText type="smallBold" style={styles.headerCountVal}>
-              {mealPlan.peopleCount} {mealPlan.peopleCount > 1 ? 'Pessoas' : 'Pessoa'}
-            </ThemedText>
-            <Pressable 
-              onPress={() => handleUpdatePeopleCount(mealPlan.peopleCount + 1)}
-              style={[styles.headerCountBtn, { backgroundColor: colors.backgroundSelected }]}>
-              <ThemedText type="smallBold">+</ThemedText>
+
+            <Pressable onPress={logout} style={styles.logoutButton}>
+              <ThemedText type="smallBold" style={{ color: '#ff9500' }}>Sair 🚪</ThemedText>
             </Pressable>
           </View>
-
-          <Pressable onPress={handleDeleteMealPlan} style={styles.deleteButton}>
-            <ThemedText type="smallBold" style={{ color: '#ff4d4d' }}>Excluir</ThemedText>
-          </Pressable>
-
-          <Pressable onPress={logout} style={styles.logoutButton}>
-            <ThemedText type="smallBold" style={{ color: '#ff9500' }}>Sair 🚪</ThemedText>
-          </Pressable>
         </View>
 
         {saving && (
@@ -557,9 +559,16 @@ const styles = StyleSheet.create({
   },
   // Estilos do Grid Principal
   header: {
+    paddingVertical: Spacing.three,
+    gap: Spacing.two,
+  },
+  headerTitleContainer: {
+    marginBottom: 2,
+  },
+  headerActionsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: Spacing.four,
+    flexWrap: 'wrap',
     gap: Spacing.two,
   },
   mainTitle: {

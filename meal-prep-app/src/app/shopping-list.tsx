@@ -289,14 +289,15 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
+    paddingHorizontal: Spacing.three,
     maxWidth: 800,
-    paddingTop: Platform.OS === 'web' ? 80 : 0,
+    width: '100%',
+    paddingTop: Platform.OS === 'web' ? 70 : 0,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: Spacing.three,
+    paddingVertical: Spacing.two,
     gap: Spacing.two,
   },
   compactBadge: {
@@ -304,11 +305,11 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.one,
     borderRadius: 12,
     alignItems: 'center',
-    justify: 'center',
   },
   actionsBar: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexWrap: 'wrap',
     gap: Spacing.two,
     marginBottom: Spacing.three,
   },
