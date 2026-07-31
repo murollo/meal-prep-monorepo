@@ -129,25 +129,50 @@ export default function ProfileScreen() {
         {/* Bloco de Informações do Usuário com Botão de Trocar Ícone */}
         <View style={styles.profileHeader}>
           <Pressable onPress={() => setIsModalOpen(true)} style={styles.avatarContainer}>
-            <Image 
-              source={{ uri: avatarUrl }} 
-              style={[styles.avatar, { borderColor: colors.backgroundSelected }]} 
-            />
+            <View style={[styles.avatarGlowRing, { borderColor: colors.primary }]}>
+              <Image 
+                source={{ uri: avatarUrl }} 
+                style={[styles.avatar, { borderColor: colors.background }]} 
+              />
+            </View>
             <View style={styles.editBadge}>
               <ThemedText style={styles.editBadgeText}>✏️</ThemedText>
             </View>
           </Pressable>
 
           <View style={styles.userInfo}>
-            <ThemedText type="subtitle">Perfil do Usuário</ThemedText>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <ThemedText type="subtitle">Perfil do Usuário</ThemedText>
+              <View style={[styles.statusTag, { backgroundColor: 'rgba(16, 185, 129, 0.15)', borderColor: 'rgba(16, 185, 129, 0.3)', borderWidth: 1 }]}>
+                <ThemedText type="smallBold" style={{ color: colors.primary, fontSize: 10 }}>🟢 ATIVO</ThemedText>
+              </View>
+            </View>
             <ThemedText type="default" style={styles.emailText}>{email}</ThemedText>
             <Pressable onPress={() => setIsModalOpen(true)} style={styles.changeIconButton}>
               <ThemedText type="smallBold" style={{ color: colors.primary }}>
-                🎨 Trocar Ícone
+                🎨 Trocar Estilo de Ícone
               </ThemedText>
             </Pressable>
           </View>
         </View>
+
+        {/* Card de Estatísticas da Conta */}
+        <ThemedView type="backgroundElement" style={[styles.statsCard, { borderColor: colors.border, borderWidth: 1 }]}>
+          <View style={styles.statBox}>
+            <ThemedText type="title" style={{ color: colors.primary, fontSize: 18 }}>PostgreSQL</ThemedText>
+            <ThemedText type="small" style={{ opacity: 0.7, fontSize: 11 }}>Neon Cloud</ThemedText>
+          </View>
+          <View style={styles.statDivider} />
+          <View style={styles.statBox}>
+            <ThemedText type="title" style={{ color: colors.secondary, fontSize: 18 }}>NestJS 11</ThemedText>
+            <ThemedText type="small" style={{ opacity: 0.7, fontSize: 11 }}>API REST</ThemedText>
+          </View>
+          <View style={styles.statDivider} />
+          <View style={styles.statBox}>
+            <ThemedText type="title" style={{ color: '#8B5CF6', fontSize: 18 }}>Expo 57</ThemedText>
+            <ThemedText type="small" style={{ opacity: 0.7, fontSize: 11 }}>React Native</ThemedText>
+          </View>
+        </ThemedView>
 
         {/* Modal de Escolha de Avatar */}
         <Modal
@@ -352,6 +377,36 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,
     borderColor: '#1c1c1e',
+  },
+  avatarGlowRing: {
+    padding: 3,
+    borderRadius: 36,
+    borderWidth: 2,
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+  },
+  statusTag: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 10,
+  },
+  statsCard: {
+    borderRadius: 16,
+    padding: Spacing.three,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    marginBottom: Spacing.two,
+  },
+  statBox: {
+    alignItems: 'center',
+  },
+  statDivider: {
+    width: 1,
+    height: 28,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   editBadgeText: {
     fontSize: 10,

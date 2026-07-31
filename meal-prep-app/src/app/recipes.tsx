@@ -233,6 +233,22 @@ export default function RecipesScreen() {
     );
   }
 
+  const getRecipeTags = (recipe: Recipe) => {
+    const tags = [];
+    const titleLower = recipe.title.toLowerCase();
+    if (titleLower.includes('frango') || titleLower.includes('carne') || titleLower.includes('peixe') || titleLower.includes('ovos') || titleLower.includes('strogonoff')) {
+      tags.push({ label: '🔥 Proteico', color: '#F97316' });
+    } else {
+      tags.push({ label: '🌱 Fit & Leve', color: '#10B981' });
+    }
+    if (recipe.ingredients.length <= 4) {
+      tags.push({ label: '⚡ Rápido', color: '#8B5CF6' });
+    } else {
+      tags.push({ label: '🍱 Completo', color: '#3B82F6' });
+    }
+    return tags;
+  };
+
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
@@ -250,12 +266,45 @@ export default function RecipesScreen() {
           </View>
         </View>
 
+        {/* Banner Hero de Métricas & Destaque */}
+        <ThemedView type="backgroundElement" style={[styles.heroCard, { borderColor: 'rgba(16, 185, 129, 0.3)', borderWidth: 1 }]}>
+          <View style={styles.heroHeader}>
+            <View>
+              <ThemedText type="subtitle" style={{ fontSize: 16 }}>📊 Painel do Catálogo</ThemedText>
+              <ThemedText type="small" style={{ opacity: 0.7 }}>Receitas salvas e ajustadas para você</ThemedText>
+            </View>
+            <View style={styles.aiBadge}>
+              <ThemedText type="smallBold" style={{ color: '#8B5CF6', fontSize: 11 }}>🤖 IA Pronta</ThemedText>
+            </View>
+          </View>
+          
+          <View style={styles.heroStatsRow}>
+            <View style={styles.heroStatItem}>
+              <ThemedText type="title" style={{ color: colors.primary, fontSize: 24 }}>{recipes.length}</ThemedText>
+              <ThemedText type="small" style={{ opacity: 0.7 }}>Receitas</ThemedText>
+            </View>
+            <View style={styles.heroStatDivider} />
+            <View style={styles.heroStatItem}>
+              <ThemedText type="title" style={{ color: colors.secondary, fontSize: 24 }}>
+                {activePeopleCount ? `${activePeopleCount}p` : '2p'}
+              </ThemedText>
+              <ThemedText type="small" style={{ opacity: 0.7 }}>Porção Ativa</ThemedText>
+            </View>
+            <View style={styles.heroStatDivider} />
+            <View style={styles.heroStatItem}>
+              <ThemedText type="title" style={{ color: '#8B5CF6', fontSize: 24 }}>100%</ThemedText>
+              <ThemedText type="small" style={{ opacity: 0.7 }}>Escalável</ThemedText>
+            </View>
+          </View>
+        </ThemedView>
+
         <FlatList
           data={recipes}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContainer}
           renderItem={({ item }) => {
             const isExpanded = expandedId === item.id;
+            const tags = getRecipeTags(item);
             return (
               <ThemedView type="backgroundElement" style={[styles.card, { borderColor: colors.border, borderWidth: 1 }]}>
                 <Pressable onPress={() => toggleExpand(item.id)} style={styles.cardHeader}>
@@ -266,6 +315,13 @@ export default function RecipesScreen() {
                         {item.description}
                       </ThemedText>
                     )}
+                    <View style={styles.tagsRow}>
+                      {tags.map((tag, idx) => (
+                        <View key={idx} style={[styles.tagPill, { backgroundColor: tag.color + '1A', borderColor: tag.color + '40' }]}>
+                          <ThemedText type="smallBold" style={{ color: tag.color, fontSize: 10 }}>{tag.label}</ThemedText>
+                        </View>
+                      ))}
+                    </View>
                   </View>
                   <View style={[styles.badge, { backgroundColor: 'rgba(16, 185, 129, 0.15)', borderWidth: 1, borderColor: 'rgba(16, 185, 129, 0.3)' }]}>
                     <ThemedText type="smallBold" style={[styles.badgeText, { color: colors.primary }]}>
@@ -473,8 +529,54 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'web' ? 80 : 0,
   },
   header: {
-    paddingVertical: Spacing.four,
+    paddingVertical: Spacing.three,
     gap: Spacing.one,
+  },
+  heroCard: {
+    borderRadius: 20,
+    padding: Spacing.four,
+    marginBottom: Spacing.four,
+    gap: Spacing.three,
+    backgroundColor: 'rgba(16, 185, 129, 0.04)',
+  },
+  heroHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  aiBadge: {
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.one,
+    borderRadius: 12,
+    backgroundColor: 'rgba(139, 92, 246, 0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(139, 92, 246, 0.3)',
+  },
+  heroStatsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    paddingTop: Spacing.one,
+  },
+  heroStatItem: {
+    alignItems: 'center',
+  },
+  heroStatDivider: {
+    width: 1,
+    height: 30,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  tagsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.one,
+    marginTop: Spacing.two,
+  },
+  tagPill: {
+    paddingHorizontal: Spacing.two,
+    paddingVertical: 2,
+    borderRadius: 6,
+    borderWidth: 1,
   },
   headerTitleRow: {
     flexDirection: 'row',

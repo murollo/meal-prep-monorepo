@@ -204,6 +204,21 @@ export default function ShoppingListScreen() {
           </View>
         </View>
 
+        {/* Card de Progresso das Compras */}
+        {items.length > 0 && (
+          <ThemedView type="backgroundElement" style={[styles.progressCard, { borderColor: colors.border, borderWidth: 1 }]}>
+            <View style={styles.progressHeader}>
+              <ThemedText type="smallBold" style={{ color: colors.textSecondary, fontSize: 11 }}>PROGRESSO DAS COMPRAS</ThemedText>
+              <ThemedText type="smallBold" style={{ color: colors.primary, fontSize: 12 }}>
+                {Object.values(checkedItems).filter(Boolean).length} de {items.length} ({Math.round((Object.values(checkedItems).filter(Boolean).length / items.length) * 100)}%)
+              </ThemedText>
+            </View>
+            <View style={styles.progressBarTrack}>
+              <View style={[styles.progressBarFill, { width: `${Math.round((Object.values(checkedItems).filter(Boolean).length / items.length) * 100)}%`, backgroundColor: colors.primary }]} />
+            </View>
+          </ThemedView>
+        )}
+
         {/* Barra de Ações (WhatsApp e Copiar) */}
         <View style={styles.actionsBar}>
           <Pressable onPress={handleShareWhatsApp} style={[styles.actionButton, { backgroundColor: '#25D366' }]}>
@@ -291,6 +306,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.three,
     gap: Spacing.two,
+  },
+  progressCard: {
+    borderRadius: 16,
+    padding: Spacing.three,
+    marginBottom: Spacing.three,
+    gap: Spacing.two,
+  },
+  progressHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  progressBarTrack: {
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    overflow: 'hidden',
+  },
+  progressBarFill: {
+    height: '100%',
+    borderRadius: 4,
   },
   actionsBar: {
     flexDirection: 'row',
