@@ -6,11 +6,22 @@
   --font-rounded: 'Outfit', 'SF Pro Rounded', sans-serif;
   --font-serif: Georgia, 'Times New Roman', serif;
 }
-html, body, #root {
+html {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+body, #root {
   background-color: #0B0D12 !important;
   color: #F9FAFB;
   min-height: 100vh;
-  margin: 0;
-  padding: 0;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
   overflow-x: hidden !important;
+  position: relative !important;
+}
+img, svg, button, input, div {
+  max-width: 100%;
 }
