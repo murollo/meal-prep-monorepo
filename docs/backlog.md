@@ -13,6 +13,7 @@ Lista de tarefas para acompanhar o desenvolvimento do projeto.
 1. **Explicação Contínua:** Sempre explicar o que está sendo construído ou corrigido passo a passo de forma clara para o desenvolvedor.
 2. **Commits Atômicos por Funcionalidade:** Realizar commits no Git a cada entrega funcional lógica concluída (agrupando refinamentos e pequenos ajustes no mesmo commit para manter o histórico do Git limpo e profissional).
 3. **Segurança de Variáveis de Ambiente:** Garantir que credenciais e o arquivo `.env` permaneçam ignorados no `.gitignore`, utilizando apenas o `.env.example` no controle de versão.
+4. **Aprovação Prévia de Commits:** Sempre apresentar o resumo detalhado dos arquivos e linhas alteradas para o desenvolvedor visualizar antes de executar qualquer `git commit` e `git push`.
 
 ---
 
