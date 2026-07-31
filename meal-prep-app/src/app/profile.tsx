@@ -142,7 +142,7 @@ export default function ProfileScreen() {
             <ThemedText type="subtitle">Perfil do Usuário</ThemedText>
             <ThemedText type="default" style={styles.emailText}>{email}</ThemedText>
             <Pressable onPress={() => setIsModalOpen(true)} style={styles.changeIconButton}>
-              <ThemedText type="smallBold" style={{ color: '#007AFF' }}>
+              <ThemedText type="smallBold" style={{ color: colors.primary }}>
                 🎨 Trocar Ícone
               </ThemedText>
             </Pressable>
@@ -157,7 +157,7 @@ export default function ProfileScreen() {
           onRequestClose={() => setIsModalOpen(false)}
         >
           <View style={styles.modalOverlay}>
-            <ThemedView type="backgroundElement" style={styles.modalContent}>
+            <ThemedView type="backgroundElement" style={[styles.modalContent, { borderColor: colors.border }]}>
               <ThemedText type="subtitle" style={{ marginBottom: 4 }}>Escolha seu Avatar</ThemedText>
               <ThemedText type="small" style={{ opacity: 0.7, marginBottom: 16 }}>
                 Selecione o estilo do ícone da sua foto de perfil:
@@ -172,7 +172,7 @@ export default function ProfileScreen() {
                       key={style.id}
                       style={[
                         styles.avatarOption,
-                        isSelected && { borderColor: '#007AFF', borderWidth: 2, backgroundColor: 'rgba(0, 122, 255, 0.1)' }
+                        isSelected && { borderColor: colors.primary, borderWidth: 2, backgroundColor: 'rgba(16, 185, 129, 0.15)' }
                       ]}
                       onPress={() => {
                         setSelectedAvatarStyle(style.id);
@@ -189,17 +189,17 @@ export default function ProfileScreen() {
               </View>
 
               <Pressable 
-                style={[styles.button, { backgroundColor: '#333', marginTop: 16 }]}
+                style={[styles.button, { backgroundColor: colors.backgroundSelected, marginTop: 16 }]}
                 onPress={() => setIsModalOpen(false)}
               >
-                <ThemedText type="smallBold" style={{ color: '#fff' }}>Fechar</ThemedText>
+                <ThemedText type="smallBold" style={{ color: colors.text }}>Fechar</ThemedText>
               </Pressable>
             </ThemedView>
           </View>
         </Modal>
 
         {/* Formulário de Alteração de Senha */}
-        <ThemedView type="backgroundElement" style={styles.card}>
+        <ThemedView type="backgroundElement" style={[styles.card, { borderColor: colors.border, borderWidth: 1 }]}>
           <ThemedText type="smallBold" style={styles.cardTitle}>ALTERAR SENHA DE ACESSO</ThemedText>
           
           {errorMessage && (
@@ -278,7 +278,7 @@ export default function ProfileScreen() {
             <Pressable 
               style={({ pressed }) => [
                 styles.button, 
-                { backgroundColor: '#007AFF', opacity: pressed || loading ? 0.8 : 1 }
+                { backgroundColor: colors.primary, opacity: pressed || loading ? 0.8 : 1 }
               ]}
               onPress={handleChangePassword}
               disabled={loading}

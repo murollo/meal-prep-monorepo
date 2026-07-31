@@ -244,7 +244,7 @@ export default function RecipesScreen() {
                 Explore e cadastre refeições para suas marmitas semanais.
               </ThemedText>
             </View>
-            <Pressable onPress={openCreateModal} style={styles.createButton}>
+            <Pressable onPress={openCreateModal} style={[styles.createButton, { backgroundColor: colors.primary }]}>
               <ThemedText type="smallBold" style={{ color: '#fff' }}>➕ Nova Receita</ThemedText>
             </Pressable>
           </View>
@@ -257,7 +257,7 @@ export default function RecipesScreen() {
           renderItem={({ item }) => {
             const isExpanded = expandedId === item.id;
             return (
-              <ThemedView type="backgroundElement" style={styles.card}>
+              <ThemedView type="backgroundElement" style={[styles.card, { borderColor: colors.border, borderWidth: 1 }]}>
                 <Pressable onPress={() => toggleExpand(item.id)} style={styles.cardHeader}>
                   <View style={{ flex: 1 }}>
                     <ThemedText type="subtitle" style={styles.recipeTitle}>{item.title}</ThemedText>
@@ -267,8 +267,8 @@ export default function RecipesScreen() {
                       </ThemedText>
                     )}
                   </View>
-                  <View style={[styles.badge, { backgroundColor: colors.backgroundSelected }]}>
-                    <ThemedText type="smallBold" style={styles.badgeText}>
+                  <View style={[styles.badge, { backgroundColor: 'rgba(16, 185, 129, 0.15)', borderWidth: 1, borderColor: 'rgba(16, 185, 129, 0.3)' }]}>
+                    <ThemedText type="smallBold" style={[styles.badgeText, { color: colors.primary }]}>
                       Serve {item.baseServings} {item.baseServings > 1 ? 'Pessoas' : 'Pessoa'}
                     </ThemedText>
                   </View>
@@ -317,7 +317,7 @@ export default function RecipesScreen() {
 
                     <View style={styles.cardActionsRow}>
                       <Pressable onPress={() => openEditModal(item)} style={styles.editRecipeButton}>
-                        <ThemedText type="smallBold" style={{ color: '#007AFF' }}>✏️ Editar Receita</ThemedText>
+                        <ThemedText type="smallBold" style={{ color: colors.primary }}>✏️ Editar Receita</ThemedText>
                       </Pressable>
                     </View>
                   </View>
@@ -420,7 +420,7 @@ export default function RecipesScreen() {
                     </View>
                   ))}
                   <Pressable onPress={addIngredientRow} style={styles.addIngButton}>
-                    <ThemedText type="smallBold" style={{ color: '#007AFF' }}>+ Adicionar Ingrediente</ThemedText>
+                    <ThemedText type="smallBold" style={{ color: colors.primary }}>+ Adicionar Ingrediente</ThemedText>
                   </Pressable>
                 </View>
 
@@ -442,7 +442,7 @@ export default function RecipesScreen() {
                 <Pressable onPress={() => setIsModalOpen(false)} style={styles.cancelModalButton} disabled={submitting}>
                   <ThemedText type="smallBold" style={{ color: '#aaa' }}>Cancelar</ThemedText>
                 </Pressable>
-                <Pressable onPress={handleSaveRecipe} style={styles.saveModalButton} disabled={submitting}>
+                <Pressable onPress={handleSaveRecipe} style={[styles.saveModalButton, { backgroundColor: colors.primary }]} disabled={submitting}>
                   {submitting ? (
                     <ActivityIndicator color="#fff" />
                   ) : (

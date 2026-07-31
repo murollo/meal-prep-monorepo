@@ -234,14 +234,14 @@ export default function ShoppingListScreen() {
                 style={[
                   styles.itemCard,
                   isChecked && { opacity: 0.5 },
-                  { backgroundColor: colors.backgroundElement }
+                  { backgroundColor: colors.backgroundElement, borderColor: colors.border, borderWidth: 1 }
                 ]}>
                 
                 {/* Checkbox circular customizado */}
                 <View style={[
                   styles.checkbox,
-                  { borderColor: colors.text },
-                  isChecked && [styles.checkboxChecked, { backgroundColor: colors.text }]
+                  { borderColor: isChecked ? colors.primary : colors.text },
+                  isChecked && [styles.checkboxChecked, { backgroundColor: colors.primary }]
                 ]}>
                   {isChecked && <View style={styles.checkmark} />}
                 </View>
