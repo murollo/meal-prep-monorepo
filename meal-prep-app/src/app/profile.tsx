@@ -156,23 +156,7 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* Card de Estatísticas da Conta */}
-        <ThemedView type="backgroundElement" style={[styles.statsCard, { borderColor: colors.border, borderWidth: 1 }]}>
-          <View style={styles.statBox}>
-            <ThemedText type="title" style={{ color: colors.primary, fontSize: 18 }}>PostgreSQL</ThemedText>
-            <ThemedText type="small" style={{ opacity: 0.7, fontSize: 11 }}>Neon Cloud</ThemedText>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.statBox}>
-            <ThemedText type="title" style={{ color: colors.secondary, fontSize: 18 }}>NestJS 11</ThemedText>
-            <ThemedText type="small" style={{ opacity: 0.7, fontSize: 11 }}>API REST</ThemedText>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.statBox}>
-            <ThemedText type="title" style={{ color: '#8B5CF6', fontSize: 18 }}>Expo 57</ThemedText>
-            <ThemedText type="small" style={{ opacity: 0.7, fontSize: 11 }}>React Native</ThemedText>
-          </View>
-        </ThemedView>
+
 
         {/* Modal de Escolha de Avatar */}
         <Modal

@@ -202,22 +202,15 @@ export default function ShoppingListScreen() {
               Ingredientes escalados para {activePlan.peopleCount} {activePlan.peopleCount > 1 ? 'pessoas' : 'pessoa'}
             </ThemedText>
           </View>
-        </View>
 
-        {/* Card de Progresso das Compras */}
-        {items.length > 0 && (
-          <ThemedView type="backgroundElement" style={[styles.progressCard, { borderColor: colors.border, borderWidth: 1 }]}>
-            <View style={styles.progressHeader}>
-              <ThemedText type="smallBold" style={{ color: colors.textSecondary, fontSize: 11 }}>PROGRESSO DAS COMPRAS</ThemedText>
-              <ThemedText type="smallBold" style={{ color: colors.primary, fontSize: 12 }}>
-                {Object.values(checkedItems).filter(Boolean).length} de {items.length} ({Math.round((Object.values(checkedItems).filter(Boolean).length / items.length) * 100)}%)
+          {items.length > 0 && (
+            <View style={[styles.compactBadge, { backgroundColor: 'rgba(16, 185, 129, 0.12)', borderColor: 'rgba(16, 185, 129, 0.3)', borderWidth: 1 }]}>
+              <ThemedText type="smallBold" style={{ color: colors.primary, fontSize: 13 }}>
+                {Object.values(checkedItems).filter(Boolean).length}/{items.length}
               </ThemedText>
             </View>
-            <View style={styles.progressBarTrack}>
-              <View style={[styles.progressBarFill, { width: `${Math.round((Object.values(checkedItems).filter(Boolean).length / items.length) * 100)}%`, backgroundColor: colors.primary }]} />
-            </View>
-          </ThemedView>
-        )}
+          )}
+        </View>
 
         {/* Barra de Ações (WhatsApp e Copiar) */}
         <View style={styles.actionsBar}>
@@ -307,26 +300,12 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.three,
     gap: Spacing.two,
   },
-  progressCard: {
-    borderRadius: 16,
-    padding: Spacing.three,
-    marginBottom: Spacing.three,
-    gap: Spacing.two,
-  },
-  progressHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  compactBadge: {
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.one,
+    borderRadius: 12,
     alignItems: 'center',
-  },
-  progressBarTrack: {
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    overflow: 'hidden',
-  },
-  progressBarFill: {
-    height: '100%',
-    borderRadius: 4,
+    justify: 'center',
   },
   actionsBar: {
     flexDirection: 'row',

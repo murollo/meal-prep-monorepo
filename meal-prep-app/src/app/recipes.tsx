@@ -266,37 +266,17 @@ export default function RecipesScreen() {
           </View>
         </View>
 
-        {/* Banner Hero de Métricas & Destaque */}
-        <ThemedView type="backgroundElement" style={[styles.heroCard, { borderColor: 'rgba(16, 185, 129, 0.3)', borderWidth: 1 }]}>
-          <View style={styles.heroHeader}>
-            <View>
-              <ThemedText type="subtitle" style={{ fontSize: 16 }}>📊 Painel do Catálogo</ThemedText>
-              <ThemedText type="small" style={{ opacity: 0.7 }}>Receitas salvas e ajustadas para você</ThemedText>
-            </View>
-            <View style={styles.aiBadge}>
-              <ThemedText type="smallBold" style={{ color: '#8B5CF6', fontSize: 11 }}>🤖 IA Pronta</ThemedText>
-            </View>
+        {/* Contador Minimalista */}
+        <View style={styles.miniStatsRow}>
+          <View style={[styles.miniStatChip, { backgroundColor: colors.backgroundElement, borderColor: colors.border, borderWidth: 1 }]}>
+            <ThemedText type="smallBold" style={{ color: colors.primary }}>{recipes.length} {recipes.length === 1 ? 'receita' : 'receitas'}</ThemedText>
           </View>
-          
-          <View style={styles.heroStatsRow}>
-            <View style={styles.heroStatItem}>
-              <ThemedText type="title" style={{ color: colors.primary, fontSize: 24 }}>{recipes.length}</ThemedText>
-              <ThemedText type="small" style={{ opacity: 0.7 }}>Receitas</ThemedText>
-            </View>
-            <View style={styles.heroStatDivider} />
-            <View style={styles.heroStatItem}>
-              <ThemedText type="title" style={{ color: colors.secondary, fontSize: 24 }}>
-                {activePeopleCount ? `${activePeopleCount}p` : '2p'}
-              </ThemedText>
-              <ThemedText type="small" style={{ opacity: 0.7 }}>Porção Ativa</ThemedText>
-            </View>
-            <View style={styles.heroStatDivider} />
-            <View style={styles.heroStatItem}>
-              <ThemedText type="title" style={{ color: '#8B5CF6', fontSize: 24 }}>100%</ThemedText>
-              <ThemedText type="small" style={{ opacity: 0.7 }}>Escalável</ThemedText>
-            </View>
+          <View style={[styles.miniStatChip, { backgroundColor: colors.backgroundElement, borderColor: colors.border, borderWidth: 1 }]}>
+            <ThemedText type="smallBold" style={{ color: colors.textSecondary }}>
+              Plano: {activePeopleCount ? `${activePeopleCount} ${activePeopleCount > 1 ? 'pessoas' : 'pessoa'}` : '2 pessoas'}
+            </ThemedText>
           </View>
-        </ThemedView>
+        </View>
 
         <FlatList
           data={recipes}
@@ -532,39 +512,16 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.three,
     gap: Spacing.one,
   },
-  heroCard: {
-    borderRadius: 20,
-    padding: Spacing.four,
-    marginBottom: Spacing.four,
-    gap: Spacing.three,
-    backgroundColor: 'rgba(16, 185, 129, 0.04)',
-  },
-  heroHeader: {
+  miniStatsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    gap: Spacing.two,
+    marginBottom: Spacing.three,
   },
-  aiBadge: {
+  miniStatChip: {
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.one,
-    borderRadius: 12,
-    backgroundColor: 'rgba(139, 92, 246, 0.15)',
-    borderWidth: 1,
-    borderColor: 'rgba(139, 92, 246, 0.3)',
-  },
-  heroStatsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingTop: Spacing.one,
-  },
-  heroStatItem: {
-    alignItems: 'center',
-  },
-  heroStatDivider: {
-    width: 1,
-    height: 30,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 20,
   },
   tagsRow: {
     flexDirection: 'row',
