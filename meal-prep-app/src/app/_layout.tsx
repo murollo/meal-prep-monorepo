@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme, View, ActivityIndicator } from 'react-native';
+import { useColorScheme, View, ActivityIndicator, Platform } from 'react-native';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import AppTabs from '@/components/app-tabs';
@@ -9,12 +9,18 @@ import { AuthProvider, useAuth } from '@/context/auth-context';
 import LoginScreen from '@/components/login-screen';
 import RegisterScreen from '@/components/register-screen';
 
-SplashScreen.preventAutoHideAsync();
+if (Platform.OS !== 'web') {
+  SplashScreen.preventAutoHideAsync().catch(() => {});
+}
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
   const { token, isLoading } = useAuth();
   const [currentAuthScreen, setCurrentAuthScreen] = useState<'login' | 'register'>('login');
+
+  useEffect(() => {
+    SplashScreen.hideAsync().catch(() => {});
+  }, []);
 
   if (isLoading) {
     return (
