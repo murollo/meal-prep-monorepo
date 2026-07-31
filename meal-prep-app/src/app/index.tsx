@@ -16,8 +16,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing, Colors } from '@/constants/theme';
 import { useColorScheme } from 'react-native';
-
-const API_BASE_URL = 'http://localhost:3000';
+import { API_BASE_URL } from '@/constants/config';
 
 interface Recipe {
   id: string;

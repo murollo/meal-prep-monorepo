@@ -15,8 +15,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing, Colors } from '@/constants/theme';
 import { useAuth } from '@/context/auth-context';
-
-const API_BASE_URL = 'http://localhost:3000';
+import { API_BASE_URL } from '@/constants/config';
 
 // Função auxiliar simples para decodificar a carga útil do JWT (JSON Web Token)
 const decodeJwt = (token: string | null) => {

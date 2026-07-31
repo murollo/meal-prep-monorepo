@@ -16,8 +16,7 @@ import { Spacing, Colors } from '@/constants/theme';
 import { useColorScheme } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { useAuth } from '@/context/auth-context';
-
-const API_BASE_URL = 'http://localhost:3000';
+import { API_BASE_URL } from '@/constants/config';
 
 interface ShoppingListItem {
   ingredientId: string;

@@ -17,6 +17,7 @@ import { Spacing, Colors } from '@/constants/theme';
 import { useColorScheme } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { useAuth } from '@/context/auth-context';
+import { API_BASE_URL } from '@/constants/config';
 
 interface Ingredient {
   id: string;
@@ -24,6 +25,7 @@ interface Ingredient {
 }
 
 interface RecipeIngredient {
+  ingredientId: string;
   quantity: number;
   unit: string;
   ingredient: Ingredient;
@@ -38,7 +40,7 @@ interface Recipe {
   ingredients: RecipeIngredient[];
 }
 
-const API_URL = 'http://localhost:3000/recipes';
+const API_URL = `${API_BASE_URL}/recipes`;
 
 export default function RecipesScreen() {
   const scheme = useColorScheme();
