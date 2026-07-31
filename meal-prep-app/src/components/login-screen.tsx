@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemedText } from './themed-text';
 import { ThemedView } from './themed-view';
 import { Spacing, Colors } from '@/constants/theme';
+import { useAuth } from '@/context/auth-context';
 import { API_BASE_URL } from '@/constants/config';
 
 interface LoginScreenProps {
