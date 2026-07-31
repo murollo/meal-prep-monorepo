@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   StyleSheet, 
   TextInput, 
@@ -59,6 +59,32 @@ export default function ProfileScreen() {
   // Estado para estilo de avatar selecionado e controle do modal
   const [selectedAvatarStyle, setSelectedAvatarStyle] = useState('initials');
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Carrega o avatar salvo anteriormente
+  useEffect(() => {
+    try {
+      if (Platform.OS === 'web' && typeof localStorage !== 'undefined') {
+        const savedStyle = localStorage.getItem(`user_avatar_style_${email}`);
+        if (savedStyle) {
+          setSelectedAvatarStyle(savedStyle);
+        }
+      }
+    } catch (e) {
+      console.error('Erro ao carregar estilo do avatar:', e);
+    }
+  }, [email]);
+
+  const handleSelectAvatarStyle = (styleId: string) => {
+    setSelectedAvatarStyle(styleId);
+    try {
+      if (Platform.OS === 'web' && typeof localStorage !== 'undefined') {
+        localStorage.setItem(`user_avatar_style_${email}`, styleId);
+      }
+    } catch (e) {
+      console.error('Erro ao salvar estilo do avatar:', e);
+    }
+    setIsModalOpen(false);
+  };
 
   const getAvatarUrl = (style: string) => {
     return `https://api.dicebear.com/7.x/${style}/png?seed=${encodeURIComponent(email)}&backgroundColor=007aff,34c759,ff9500`;
@@ -183,10 +209,7 @@ export default function ProfileScreen() {
                         styles.avatarOption,
                         isSelected && { borderColor: colors.primary, borderWidth: 2, backgroundColor: 'rgba(16, 185, 129, 0.15)' }
                       ]}
-                      onPress={() => {
-                        setSelectedAvatarStyle(style.id);
-                        setIsModalOpen(false);
-                      }}
+                      onPress={() => handleSelectAvatarStyle(style.id)}
                     >
                       <Image source={{ uri: url }} style={styles.avatarOptionImage} />
                       <ThemedText type="smallBold" style={{ fontSize: 11, textAlign: 'center', marginTop: 4 }}>
