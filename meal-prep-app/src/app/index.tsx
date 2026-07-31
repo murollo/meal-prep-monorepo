@@ -9,7 +9,8 @@ import {
   Modal, 
   FlatList, 
   Text,
-  Platform
+  Platform,
+  useWindowDimensions
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/themed-text';
@@ -55,6 +56,8 @@ export default function WeeklyPlannerScreen() {
   const scheme = useColorScheme();
   const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
   const { token, logout } = useAuth();
+  const { width } = useWindowDimensions();
+  const webPaddingTop = width >= 768 ? 85 : 20;
 
   const [mealPlan, setMealPlan] = useState<MealPlan | null>(null);
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -322,7 +325,7 @@ export default function WeeklyPlannerScreen() {
   // 2. Grid do Planejamento Semanal Ativo
   return (
     <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={[styles.safeArea, { paddingTop: Platform.OS === 'web' ? webPaddingTop : 0 }]}>
         {/* Cabeçalho */}
         <View style={styles.header}>
           <View style={styles.headerTitleContainer}>
