@@ -488,9 +488,10 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
+    paddingHorizontal: Spacing.three,
     maxWidth: 800,
-    paddingTop: Platform.OS === 'web' ? 80 : 0,
+    width: '100%',
+    paddingTop: Platform.OS === 'web' ? 16 : 0,
   },
   centerContainer: {
     flex: 1,

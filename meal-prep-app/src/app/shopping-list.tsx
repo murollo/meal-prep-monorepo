@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.three,
     maxWidth: 800,
     width: '100%',
-    paddingTop: Platform.OS === 'web' ? 70 : 0,
+    paddingTop: Platform.OS === 'web' ? 16 : 0,
   },
   header: {
     flexDirection: 'row',
