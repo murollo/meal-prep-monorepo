@@ -22,13 +22,13 @@ export default function AppTabs() {
       <TabList asChild>
         <CustomTabList>
           <TabTrigger name="home" href="/" asChild>
-            <TabButton>Planejamento</TabButton>
+            <TabButton>Planejar</TabButton>
           </TabTrigger>
           <TabTrigger name="recipes" href="/recipes" asChild>
             <TabButton>Receitas</TabButton>
           </TabTrigger>
           <TabTrigger name="shopping-list" href="/shopping-list" asChild>
-            <TabButton>Lista de Compras</TabButton>
+            <TabButton>Compras</TabButton>
           </TabTrigger>
           <TabTrigger name="profile" href="/profile" asChild>
             <TabButton>Perfil</TabButton>
@@ -45,7 +45,7 @@ export function TabButton({ children, isFocused, ...props }: TabTriggerSlotProps
       <ThemedView
         type={isFocused ? 'backgroundSelected' : 'backgroundElement'}
         style={styles.tabButtonView}>
-        <ThemedText type="small" themeColor={isFocused ? 'text' : 'textSecondary'}>
+        <ThemedText type="small" style={{ fontSize: 12 }} themeColor={isFocused ? 'text' : 'textSecondary'}>
           {children}
         </ThemedText>
       </ThemedView>
@@ -79,41 +79,43 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     width: '100%',
-    padding: Spacing.two,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 100,
   },
   innerContainer: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 24,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    borderRadius: 20,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     maxWidth: MaxContentWidth,
     width: '100%',
-    gap: Spacing.two,
+    gap: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
   },
   brandText: {
-    fontSize: 14,
+    fontSize: 13,
+    paddingLeft: 4,
   },
   tabsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 2,
     flexShrink: 1,
   },
   pressed: {
     opacity: 0.7,
   },
   tabButtonView: {
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 16,
+    paddingVertical: 5,
+    paddingHorizontal: 8,
+    borderRadius: 12,
   },
 });
